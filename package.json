@@ -1,0 +1,18 @@
+{
+  "name": "discord-bot-vercel-backup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Discord HTTP Interactions bot (Vercel Serverless, backup engine)",
+  "main": "api/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "deploy-commands": "node deploy-commands.js"
+  },
+  "dependencies": {
+    "discord-interactions": "^4.1.0",
+    "@upstash/redis": "^1.34.3"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
