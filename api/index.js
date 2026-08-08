@@ -113,7 +113,7 @@ module.exports = async (req, res) => {
   const isValid =
     signature &&
     timestamp &&
-    verifyKey(rawBody, signature, timestamp, CONFIG.DISCORD_PUBLIC_KEY);
+    (await verifyKey(rawBody, signature, timestamp, CONFIG.DISCORD_PUBLIC_KEY));
 
   console.log('[Verify] isValid=%s', isValid);
 
