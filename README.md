@@ -92,7 +92,7 @@ Set key `MAINTENANCE_MODE` ke `"1"` di Upstash Redis (lewat Upstash Console atau
    ```bash
    DISCORD_TOKEN=xxx DISCORD_APPLICATION_ID=xxx node deploy-commands.js
    ```
-   Tambahkan `DISCORD_GUILD_ID=xxx` untuk testing instan di 1 server saja.
+   Tambahkan `DISCORD_GUILD_ID=xxx` untuk testing instan di 1 server saja. Hapus `DISCORD_GUILD_ID=xxx` jika ingin menerapkan ke semua server (bisa memakan waktu ~1 jam untuk menerapkan slash commands).
 6. **Undang bot ke server** dengan scope `applications.commands` + `bot` (permission minimal: Send Messages).
 
 ## Alur Request
@@ -106,3 +106,6 @@ Discord -> POST /api (signature header)
 ```
 
 Tidak ada state di memori antar-request (serverless = stateless per invocation). Riwayat percakapan per-channel TIDAK dipertahankan lintas command di versi ini — setiap `/tanya` independen. Kalau butuh conversation memory lintas-command, perlu backing store eksternal (KV/Redis/Postgres), bukan `Map()` in-memory seperti bot lama (karena tiap invocation Vercel bisa jadi instance berbeda).
+
+
+Kode dibuat dan di-debug oleh BoltZy, dikombinasikan dengan Claude (sonnet 5 tanpa mode thinking) dan Gemini 3.6 flash untuk troubleshoot sebagian masalah.
