@@ -24,7 +24,7 @@ lib/
 | `DISCORD_APPLICATION_ID` | ✅ | Application ID -> General Information |
 | `OWNER_ID` | opsional | Default `1091901409668124805` |
 | `VERCEL_PROXY_URL` | ✅ | Base URL proxy AI OpenAI-compatible kamu (tanpa `/chat/completions`) |
-| `VERCEL_PROXY_KEY` | ✅ | API key proxy AI kamu |
+| `VERCEL_PROXY_KEY` | ✅ | API key proxy AI kamu (jika memakai Auth, jika tidak maka isi sembarang saja, contoh "apiKey" |
 | `VERCEL_PROXY_MODEL` | opsional | Default `gpt-4o-mini` |
 | `MAX_HISTORY` | opsional | Default `6` (belum dipakai aktif di versi stateless ini) |
 | `AI_TIMEOUT_MS` | opsional | Default `25000` |
