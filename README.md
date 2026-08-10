@@ -157,3 +157,6 @@ yang sesuai region akun kamu, dan pastikan `QSTASH_URL` cocok:
 
 Ketiga nilai token/key harus diambil **bersamaan dari toggle yang sama** —
 jangan campur token region A dengan signing key region B.
+
+
+Seluruh kode ini dibuat dan diuji langsung oleh owner, **BoltZy**. Dilengkapi dengan penalaran **Claude Sonnet 5** untuk troubleshoot masalah dan penambahan fitur slash commands, dan beberapa menggunakan **Gemini 3.6 flash** untuk memecahkan sebagian kecil masalah dan merancang struktur prompting untuk menghemat token Claude. Semua struktur kode itu adalah hasil vibe coding dari BoltZy dari hp langsung menggunakan **QuickEdit dan Termux**, disempurnakan dengan AI.
