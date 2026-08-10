@@ -160,3 +160,6 @@ jangan campur token region A dengan signing key region B.
 
 ## Catatan pengembangan kode
 Seluruh kode ini dibuat dan diuji langsung oleh owner, **BoltZy**. Dilengkapi dengan penalaran **Claude Sonnet 5** untuk troubleshoot masalah dan penambahan fitur slash commands, dan beberapa menggunakan **Gemini 3.6 flash** untuk memecahkan sebagian kecil masalah dan merancang struktur prompting untuk menghemat token Claude. Semua struktur kode itu adalah hasil vibe coding dari BoltZy dari hp langsung menggunakan **QuickEdit dan Termux**, disempurnakan dengan AI.
+
+## Penting
+jangan pernah **hardcoded .env** lalu upload ke repo/fork github. Gunakan logika sync saja agar bisa menarik .env dari penyedia host (Vercel di environment and variable).
