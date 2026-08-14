@@ -18,6 +18,11 @@ const {
 } = require('../lib/commands/moderation');
 const { publishAiJob } = require('../lib/qstash');
 const { queueTranslate, queueRingkas } = require('../lib/commands/aiJobs');
+const { handleModel } = require('../lib/commands/model');
+const { handleRiwayat } = require('../lib/commands/riwayat');
+const { handleStats } = require('../lib/commands/stats');
+const { queueStatus } = require('../lib/commands/status');
+const { logErrorToChannel } = require('../lib/errorLog');
 
 // Command yang butuh panggil AI (dirate-limit, dilempar ke QStash).
 const AI_COMMANDS = new Set(['tanya', 'translate', 'ringkas']);
@@ -210,7 +215,7 @@ module.exports = async (req, res) => {
       // --- Dispatch ke handler masing-masing ---
       switch (commandName) {
         case 'model':
-          await dispatchModelDirect(interaction, res);
+          await handleModel(interaction, res);
           return;
         case 'avatar':
           await handleAvatar(interaction, res);
@@ -239,6 +244,15 @@ module.exports = async (req, res) => {
         case 'reset':
           await handleReset(interaction, res);
           return;
+        case 'riwayat':
+          await handleRiwayat(interaction, res);
+          return;
+        case 'stats':
+          await handleStats(interaction, res);
+          return;
+        case 'status':
+          await queueStatus(interaction, res);
+          return;
         case 'translate':
           await queueTranslate(interaction, res);
           return;
@@ -258,6 +272,12 @@ module.exports = async (req, res) => {
       }
     } catch (err) {
       console.error(`[Dispatch] Unhandled error for command "${commandName}":`, err);
+      await logErrorToChannel({
+        source: `api/index.js:${commandName}`,
+        message: err.message,
+        userId: invokerId,
+        channelId: interaction.channel_id,
+      });
       res.status(200).json({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: { content: '⚠️ Terjadi kesalahan internal. Coba lagi beberapa saat ya 🙏' },
@@ -274,12 +294,14 @@ module.exports = async (req, res) => {
  * dispatchTanya — /tanya: publish job ke QStash (chat bebas dengan
  * conversation history), lalu balas deferred. Beda dari /translate dan
  * /ringkas (yang tidak pakai history) — ditangani terpisah karena butuh
- * baca opsi "pesan" dan validasi kosong yang sedikit berbeda.
+ * baca opsi "pesan"/"mode" dan validasi kosong yang sedikit berbeda.
  */
 async function dispatchTanya(interaction, res, invokerId) {
   const options = interaction.data?.options || [];
   const pesanOpt = options.find((o) => o.name === 'pesan');
+  const modeOpt = options.find((o) => o.name === 'mode');
   const userMessage = (pesanOpt?.value || '').trim();
+  const mode = modeOpt?.value || null; // 'singkat' | 'detail' | 'kreatif' | null
 
   if (!userMessage) {
     res.status(200).json({
@@ -295,9 +317,11 @@ async function dispatchTanya(interaction, res, invokerId) {
     await publishAiJob({
       token: interaction.token,
       channelId: interaction.channel_id,
+      userId: invokerId,
       userMessage,
       isOwner: isOwnerFlag,
       jobType: 'tanya',
+      extra: { mode },
     });
   } catch (err) {
     console.error('[dispatchTanya] Failed to publish QStash job:', err.message);
@@ -313,44 +337,5 @@ async function dispatchTanya(interaction, res, invokerId) {
   // menuntaskan hasil lewat PATCH @original.
   res.status(200).json({
     type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-  });
-}
-
-/**
- * dispatchModelDirect — /model dijawab langsung sebagai Type 4
- * (CHANNEL_MESSAGE_WITH_SOURCE) dalam response pertama, karena command
- * ini instan (tidak panggil AI) sehingga tidak butuh deferred sama sekali.
- */
-async function dispatchModelDirect(interaction, res) {
-  const invokerId = interaction.member?.user?.id || interaction.user?.id;
-  const isOwner = invokerId === CONFIG.OWNER_ID;
-
-  if (!isOwner) {
-    res.status(200).json({
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: { content: '❌ Command ini khusus Owner.' },
-    });
-    return;
-  }
-
-  const activeModel = CONFIG.VERCEL_PROXY_MODEL;
-  const proxyConfigured = Boolean(CONFIG.VERCEL_PROXY_URL && CONFIG.VERCEL_PROXY_KEY);
-
-  res.status(200).json({
-    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-    data: {
-      embeds: [
-        {
-          title: '🔧 Saucepan Engine — Model Status',
-          color: 0x5865f2,
-          fields: [
-            { name: 'Active Model', value: `\`${activeModel}\``, inline: true },
-            { name: 'Proxy Status', value: proxyConfigured ? '✅ Configured' : '❌ Not configured', inline: true },
-            { name: 'Proxy URL', value: CONFIG.VERCEL_PROXY_URL ? `\`${CONFIG.VERCEL_PROXY_URL}\`` : '—', inline: false },
-          ],
-          footer: { text: 'Ubah VERCEL_PROXY_MODEL di Environment Variables untuk ganti model.' },
-        },
-      ],
-    },
   });
 }
