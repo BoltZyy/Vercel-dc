@@ -190,3 +190,6 @@ Seluruh kode ini dibuat dan diuji langsung oleh owner, **BoltZy**. Dilengkapi de
 
 ## Penting
 Jangan pernah **hardcoded .env** yang berisi API, token, dan hal sensitif lainnya lalu upload ke repo/fork github. Gunakan logika sync saja agar bisa menarik .env dari penyedia host (Vercel di environment and variable).
+
+## Catatan Owner (BoltZy)
+Kalau bot down, berarti sedang maintenance kode atau troubleshoot. **Jangan nanya kapan beresnya**, gw pun gatau karena project ini memang cuman ide iseng yang akhirnya jadi bot Discord di waktu senggang gw. Gw ngerjain kode ini purely karena gw seneng dan ada kemauan, bukan karena tuntutan semata.
