@@ -163,7 +163,7 @@ Semua fitur berbasis Redis **fail-open**:
    ```bash
    DISCORD_TOKEN=xxx DISCORD_APPLICATION_ID=xxx node deploy-commands.js
    ```
-   Tambahkan `DISCORD_GUILD_ID=xxx` untuk testing instan di 1 server.
+   Tambahkan `DISCORD_GUILD_ID=xxx` untuk testing instan di 1 server. Opsional, tapi sangat berguna untuk men-deploy slash-commands baru dengan cepat (misal untuk testing di 1 server khusus), jika tidak diisi, maka hapus saja tetapi mungkin jika bot sudah ada di beberapa server, slash-commands mungkin bisa memakan waktu ~1 jam untuk diperbarui dan muncul oleh Discord. Murni ketentuan Discord, bukan masalah kode.
 5. **Undang bot ke server** dengan scope `applications.commands` + `bot`.
 
 ## Catatan Region QStash
