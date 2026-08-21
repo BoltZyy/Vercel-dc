@@ -9,6 +9,12 @@
     },
     "api/process-status.js": {
       "maxDuration": 60
+    },
+    "api/process-remind.js": {
+      "maxDuration": 60
+    },
+    "api/process-export.js": {
+      "maxDuration": 60
     }
   }
 }

@@ -22,6 +22,10 @@ const { handleModel } = require('../lib/commands/model');
 const { handleRiwayat } = require('../lib/commands/riwayat');
 const { handleStats } = require('../lib/commands/stats');
 const { queueStatus } = require('../lib/commands/status');
+const { handleCoinflip, handleRoll } = require('../lib/commands/fun');
+const { handleLeaderboard } = require('../lib/commands/leaderboard');
+const { handleRemind } = require('../lib/commands/remind');
+const { queueExport } = require('../lib/commands/exportChat');
 const { logErrorToChannel } = require('../lib/errorLog');
 
 // Command yang butuh panggil AI (dirate-limit, dilempar ke QStash).
@@ -261,6 +265,21 @@ module.exports = async (req, res) => {
           return;
         case 'tanya':
           await dispatchTanya(interaction, res, invokerId);
+          return;
+        case 'coinflip':
+          await handleCoinflip(interaction, res);
+          return;
+        case 'roll':
+          await handleRoll(interaction, res);
+          return;
+        case 'leaderboard':
+          await handleLeaderboard(interaction, res);
+          return;
+        case 'remind':
+          await handleRemind(interaction, res);
+          return;
+        case 'export':
+          await queueExport(interaction, res);
           return;
         default:
           console.warn(`[Dispatch] Unknown command: ${commandName}`);

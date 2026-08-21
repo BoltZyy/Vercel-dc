@@ -232,6 +232,93 @@ const commands = [
     description: '[Owner] Cek kesehatan Redis, QStash, dan AI Gateway',
     type: 1,
   },
+  {
+    name: 'coinflip',
+    description: 'Lempar koin: Heads atau Tails',
+    type: 1,
+  },
+  {
+    name: 'roll',
+    description: 'Lempar dadu (format: d20, 2d6, 1d100, dst)',
+    type: 1,
+    options: [
+      {
+        name: 'dice',
+        description: 'Format dadu, contoh: d20, 2d6 (default: 1d6)',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'leaderboard',
+    description: 'Lihat top user pemakaian bot',
+    type: 1,
+    options: [
+      {
+        name: 'periode',
+        description: 'Cakupan waktu (default: sepanjang waktu)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Sepanjang Waktu', value: 'alltime' },
+          { name: 'Hari Ini', value: 'today' },
+        ],
+      },
+      {
+        name: 'metric',
+        description: 'Diurutkan berdasarkan apa (default: jumlah panggilan)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Jumlah Panggilan', value: 'calls' },
+          { name: 'Token Terpakai', value: 'tokens' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'remind',
+    description: 'Jadwalkan pengingat',
+    type: 1,
+    options: [
+      {
+        name: 'waktu',
+        description: 'Relatif ("10m", "2h", "1d") atau absolut ("2026-08-22 15:00")',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'pesan',
+        description: 'Isi pengingat',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'export',
+    description: '[Owner] Ekspor riwayat percakapan user ke file',
+    type: 1,
+    options: [
+      {
+        name: 'user',
+        description: 'User yang riwayatnya mau diekspor',
+        type: 6, // USER
+        required: true,
+      },
+      {
+        name: 'format',
+        description: 'Format file (default: Markdown)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Markdown (.md)', value: 'markdown' },
+          { name: 'Teks Polos (.txt)', value: 'text' },
+        ],
+      },
+    ],
+  },
 ];
 
 async function main() {
