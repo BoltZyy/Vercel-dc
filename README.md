@@ -21,7 +21,7 @@ Wajar kalau nanya "kenapa nggak pakai BotGhost/Wick/dashboard bot instan aja?" �
 
 **Redis + QStash, bukan cuma proses langsung** — ini BUKAN pilihan gaya-gayaan, ini **solusi dari masalah nyata** yang gw temuin sendiri lewat trial-error (baca aja histori troubleshoot-nya, panjang 😅): Discord maksa balasan dalam 3 detik, tapi manggil AI bisa lebih lama dari itu. Vercel Serverless juga nggak jamin proses lanjut jalan di background setelah response pertama dikirim. QStash itu yang "nge-akalin" 2 masalah itu sekaligus (deferred + queue), dan Redis buat nyimpen state (history, blocklist, dll) karena serverless function itu sendiri nggak punya memory yang nempel.
 
-**Yang paling penting: semua ini BISA GRATIS kalau lo mau belajar.** Vercel, Upstash Redis, Upstash QStash, provider AI gratisan — semuanya punya free tier yang lebih dari cukup buat bot personal. Bedanya cuma effort belajar di awal vs tinggal klik-klik di dashboard berbayar. Kalau lo baca repo ini dan mikir "kok ribet", ya emang — tapi itu harga dari ngerti apa yang sebenernya kejadian di balik layar, bukan cuma pencet tombol doang.
+**Yang paling penting: semua ini BISA GRATIS kalau lo mau belajar.** Vercel, Upstash Redis, Upstash QStash, provider AI gratisan — semuanya punya free tier yang lebih dari cukup buat bot personal. Bedanya cuma effort belajar di awal vs tinggal klik-klik di dashboard berbayar. Kalau lo baca repo ini dan mikir "kok ribet", ya emang — tapi itu harga dari ngerti apa yang sebenernya kejadian di balik layar, bukan cuma pencet tombol doang. Tapi balik lagi, **semua orang punya pilihannya masing-masing dan gw ga maksa lu buat make repo ini, kalo lu merasa dashboard lebih gampang, ya silahkan.**
 
 ---
 
