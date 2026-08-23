@@ -337,7 +337,7 @@ Seluruh kode ini dibuat dan diuji langsung oleh owner, **BoltZy**. Dilengkapi de
 
 ## 📄 Lisensi
 
-Project ini dirilis di bawah **MIT License** — bebas dipakai, diubah, di-fork, bahkan dikomersialkan siapa saja, **TAPI** disediakan apa adanya ("AS IS") **tanpa jaminan apa pun**. Kalau lo fork ini terus ada yang error, rusak, atau nimbulin masalah di server lo — itu tanggung jawab lo sendiri, bukan gw. Baca lengkapnya di file [`LICENSE`](./LICENSE).
+Project ini dirilis di bawah **MIT License** — bebas dipakai, diubah, di-fork, bahkan dikomersialkan siapa saja, **TAPI** disediakan apa adanya ("AS IS") **tanpa jaminan apa pun**. Kalau lo fork ini terus ada yang error, rusak, atau nimbulin masalah di server lo — itu tanggung jawab lo sendiri, bukan gw. Baca lengkapnya di file [`LICENSE`](./LICENSE). Pake translate kalo lu ga paham bahasa inggris, atau langsung tanya AI aja, gausah dipersulit.
 
 <details>
 <summary>Klik untuk lihat isi lengkap lisensi</summary>
