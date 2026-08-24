@@ -319,6 +319,125 @@ const commands = [
       },
     ],
   },
+  {
+    name: 'rate',
+    description: 'Kasih rating 1-10 untuk apa pun',
+    type: 1,
+    options: [
+      {
+        name: 'sesuatu',
+        description: 'Apa yang mau dirating',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'mode',
+        description: 'random (instan, gratis) atau ai (lebih jenaka, pakai kuota)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Random', value: 'random' },
+          { name: 'AI', value: 'ai' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'ship',
+    description: 'Hitung persentase kecocokan dua user',
+    type: 1,
+    options: [
+      {
+        name: 'user1',
+        description: 'User pertama',
+        type: 6,
+        required: true,
+      },
+      {
+        name: 'user2',
+        description: 'User kedua',
+        type: 6,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'timezone',
+    description: 'Konversi waktu antar zona',
+    type: 1,
+    options: [
+      {
+        name: 'waktu',
+        description: 'Waktu format HH:mm, contoh: 14:30',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'dari',
+        description: 'Zona asal (WIB, Tokyo, London, atau Asia/Jakarta)',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'ke',
+        description: 'Zona tujuan (WIB, Tokyo, London, atau Asia/Jakarta)',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'personality',
+    description: '[Owner] Lihat atau ganti kepribadian bot',
+    type: 1,
+    options: [
+      {
+        name: 'set',
+        description: 'Teks personality baru, atau "default" untuk kembali ke ENV',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'warn',
+    description: '[Moderator+] Beri peringatan ke user (dikirim via DM)',
+    type: 1,
+    options: [
+      {
+        name: 'user',
+        description: 'User yang diberi peringatan',
+        type: 6,
+        required: true,
+      },
+      {
+        name: 'alasan',
+        description: 'Alasan peringatan',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'audit-log',
+    description: '[Owner] Lihat timeline gabungan block/say/warn/error',
+    type: 1,
+    options: [
+      {
+        name: 'tipe',
+        description: 'Filter jenis tertentu (kosongkan untuk semua)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Block', value: 'block' },
+          { name: 'Unblock', value: 'unblock' },
+          { name: 'Say', value: 'say' },
+          { name: 'Warn', value: 'warn' },
+          { name: 'Error', value: 'error' },
+        ],
+      },
+    ],
+  },
 ];
 
 async function main() {
