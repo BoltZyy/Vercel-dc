@@ -15,6 +15,15 @@
     },
     "api/process-export.js": {
       "maxDuration": 60
+    },
+    "api/process-price-update.js": {
+      "maxDuration": 60
+    },
+    "api/process-market-event.js": {
+      "maxDuration": 60
+    },
+    "api/process-market-event-trigger.js": {
+      "maxDuration": 60
     }
   }
 }

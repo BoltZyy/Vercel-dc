@@ -33,6 +33,20 @@ const { handlePersonality } = require('../lib/commands/personality');
 const { handleWarn } = require('../lib/commands/warn');
 const { handleAuditLog } = require('../lib/commands/auditLog');
 const { handleRetryButton } = require('../lib/commands/retryHandler');
+const { handlePortfolio } = require('../lib/commands/trading/portfolio');
+const { handleMarket, handleMarketEvent, handleMarketSetPrice } = require('../lib/commands/trading/market');
+const { handleBuy, handleSell } = require('../lib/commands/trading/buysell');
+const { handlePosisi } = require('../lib/commands/trading/posisi');
+const { handlePinjam, handleBayarUtang, handleDebt, handleDebtApprove } = require('../lib/commands/trading/debt');
+const { handleGrant } = require('../lib/commands/trading/grant');
+const {
+  handleTradeAddItem,
+  handleTradeRequestItem,
+  handleTradeClear,
+  handleTradeSend,
+  handleTradeAccept,
+  handleTradeReject,
+} = require('../lib/commands/trading/trade');
 const { logErrorToChannel } = require('../lib/errorLog');
 
 // Command yang butuh panggil AI (dirate-limit, dilempar ke QStash).
@@ -310,6 +324,60 @@ module.exports = async (req, res) => {
           return;
         case 'audit-log':
           await handleAuditLog(interaction, res);
+          return;
+        case 'portfolio':
+          await handlePortfolio(interaction, res);
+          return;
+        case 'market':
+          await handleMarket(interaction, res);
+          return;
+        case 'market-event':
+          await handleMarketEvent(interaction, res);
+          return;
+        case 'market-set-price':
+          await handleMarketSetPrice(interaction, res);
+          return;
+        case 'buy':
+          await handleBuy(interaction, res);
+          return;
+        case 'sell':
+          await handleSell(interaction, res);
+          return;
+        case 'posisi':
+          await handlePosisi(interaction, res);
+          return;
+        case 'pinjam':
+          await handlePinjam(interaction, res);
+          return;
+        case 'bayar-utang':
+          await handleBayarUtang(interaction, res);
+          return;
+        case 'debt':
+          await handleDebt(interaction, res);
+          return;
+        case 'debt-approve':
+          await handleDebtApprove(interaction, res);
+          return;
+        case 'grant':
+          await handleGrant(interaction, res);
+          return;
+        case 'trade-add-item':
+          await handleTradeAddItem(interaction, res);
+          return;
+        case 'trade-request-item':
+          await handleTradeRequestItem(interaction, res);
+          return;
+        case 'trade-clear':
+          await handleTradeClear(interaction, res);
+          return;
+        case 'trade-send':
+          await handleTradeSend(interaction, res);
+          return;
+        case 'trade-accept':
+          await handleTradeAccept(interaction, res);
+          return;
+        case 'trade-reject':
+          await handleTradeReject(interaction, res);
           return;
         default:
           console.warn(`[Dispatch] Unknown command: ${commandName}`);

@@ -438,6 +438,310 @@ const commands = [
       },
     ],
   },
+  {
+    name: 'portfolio',
+    description: 'Lihat saldo ZYC, kepemilikan aset, dan estimasi nilai total',
+    type: 1,
+  },
+  {
+    name: 'market',
+    description: 'Lihat harga semua aset trading saat ini',
+    type: 1,
+  },
+  {
+    name: 'market-event',
+    description: '[Owner] Trigger event pasar manual',
+    type: 1,
+    options: [
+      {
+        name: 'tipe',
+        description: 'Arah event',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'Bullish (naik)', value: 'BULLISH' },
+          { name: 'Bearish (turun)', value: 'BEARISH' },
+        ],
+      },
+      {
+        name: 'aset',
+        description: 'Target aset spesifik, pisahkan koma (kosongkan untuk semua aset). Contoh: NORA,VOLT',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'market-set-price',
+    description: '[Owner] Paksa harga aset ke nilai tertentu',
+    type: 1,
+    options: [
+      {
+        name: 'aset',
+        description: 'Kode aset (NORA, VOLT, KRYN, PLUM)',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'harga',
+        description: 'Harga baru dalam ZYC',
+        type: 10, // NUMBER (mendukung desimal)
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'buy',
+    description: 'Beli aset instan di harga sekarang',
+    type: 1,
+    options: [
+      {
+        name: 'aset',
+        description: 'Kode aset (NORA, VOLT, KRYN, PLUM)',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah unit yang mau dibeli',
+        type: 4, // INTEGER
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'sell',
+    description: 'Jual aset instan di harga sekarang',
+    type: 1,
+    options: [
+      {
+        name: 'aset',
+        description: 'Kode aset (NORA, VOLT, KRYN, PLUM)',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah unit yang mau dijual',
+        type: 4,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'posisi',
+    description: 'Pasang atau batalkan order pending (ancang-ancang sebelum event)',
+    type: 1,
+    options: [
+      {
+        name: 'buy',
+        description: 'Pasang order pending beli',
+        type: 1, // SUB_COMMAND
+        options: [
+          { name: 'aset', description: 'Kode aset (NORA, VOLT, KRYN, PLUM)', type: 3, required: true },
+          { name: 'jumlah', description: 'Jumlah unit', type: 4, required: true },
+        ],
+      },
+      {
+        name: 'sell',
+        description: 'Pasang order pending jual',
+        type: 1,
+        options: [
+          { name: 'aset', description: 'Kode aset (NORA, VOLT, KRYN, PLUM)', type: 3, required: true },
+          { name: 'jumlah', description: 'Jumlah unit', type: 4, required: true },
+        ],
+      },
+      {
+        name: 'batal',
+        description: 'Batalkan order pending untuk 1 aset',
+        type: 1,
+        options: [
+          { name: 'aset', description: 'Kode aset (NORA, VOLT, KRYN, PLUM)', type: 3, required: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'pinjam',
+    description: 'Ambil pinjaman dari bank fiktif',
+    type: 1,
+    options: [
+      {
+        name: 'jumlah',
+        description: 'Jumlah pinjaman dalam ZYC',
+        type: 10,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'bayar-utang',
+    description: 'Bayar cicilan atau lunasi utang',
+    type: 1,
+    options: [
+      {
+        name: 'jumlah',
+        description: 'Jumlah pembayaran dalam ZYC',
+        type: 10,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'debt',
+    description: 'Lihat status utang dan bad debt kamu sendiri',
+    type: 1,
+  },
+  {
+    name: 'debt-approve',
+    description: '[Owner] Hapus bad debt user (write-off)',
+    type: 1,
+    options: [
+      {
+        name: 'user',
+        description: 'User yang bad debt-nya mau dihapus',
+        type: 6, // USER
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'grant',
+    description: '[Owner] Tambah atau kurangi saldo/aset user',
+    type: 1,
+    options: [
+      {
+        name: 'user',
+        description: 'User yang mau di-grant',
+        type: 6,
+        required: true,
+      },
+      {
+        name: 'tipe',
+        description: 'Cash atau aset',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'Cash (ZYC)', value: 'cash' },
+          { name: 'Aset', value: 'aset' },
+        ],
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah (boleh negatif buat mengurangi)',
+        type: 10, // NUMBER
+        required: true,
+      },
+      {
+        name: 'kode',
+        description: 'Kode aset (wajib kalau tipe=aset): NORA, VOLT, KRYN, PLUM',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'trade-add-item',
+    description: 'Tambah item ke sisi TAWARKAN di keranjang trade kamu',
+    type: 1,
+    options: [
+      {
+        name: 'tipe',
+        description: 'Cash atau aset',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'Cash (ZYC)', value: 'cash' },
+          { name: 'Aset', value: 'aset' },
+        ],
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah',
+        type: 10,
+        required: true,
+      },
+      {
+        name: 'kode',
+        description: 'Kode aset (wajib kalau tipe=aset): NORA, VOLT, KRYN, PLUM',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'trade-request-item',
+    description: 'Tambah item ke sisi MINTA di keranjang trade kamu (opsional, boleh kosong = gift)',
+    type: 1,
+    options: [
+      {
+        name: 'tipe',
+        description: 'Cash atau aset',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'Cash (ZYC)', value: 'cash' },
+          { name: 'Aset', value: 'aset' },
+        ],
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah',
+        type: 10,
+        required: true,
+      },
+      {
+        name: 'kode',
+        description: 'Kode aset (wajib kalau tipe=aset): NORA, VOLT, KRYN, PLUM',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'trade-clear',
+    description: 'Kosongkan keranjang trade kamu',
+    type: 1,
+  },
+  {
+    name: 'trade-send',
+    description: 'Kirim tawaran trade dari keranjang kamu ke user lain',
+    type: 1,
+    options: [
+      {
+        name: 'user',
+        description: 'User yang mau diajak trade',
+        type: 6,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'trade-accept',
+    description: 'Terima tawaran trade yang masuk',
+    type: 1,
+    options: [
+      {
+        name: 'id',
+        description: 'ID trade yang mau diterima',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'trade-reject',
+    description: 'Tolak tawaran trade yang masuk',
+    type: 1,
+    options: [
+      {
+        name: 'id',
+        description: 'ID trade yang mau ditolak',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
 ];
 
 async function main() {
