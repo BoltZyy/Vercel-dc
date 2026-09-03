@@ -114,7 +114,10 @@ function getRawBody(req) {
   });
 }
 
+const { augmentResponse } = require('../lib/resHelper');
+
 module.exports = async (req, res) => {
+  augmentResponse(res); // wajib: NODEJS_HELPERS=0 mematikan res.status()/res.json() bawaan Vercel
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
