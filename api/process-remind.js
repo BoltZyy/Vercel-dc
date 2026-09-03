@@ -1,3 +1,4 @@
+const { augmentResponse } = require('../lib/resHelper');
 'use strict';
 
 const { sendChannelMessage } = require('../lib/discordApi');
@@ -19,6 +20,7 @@ module.exports.config = {
 };
 
 module.exports = async (req, res) => {
+  augmentResponse(res);
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;

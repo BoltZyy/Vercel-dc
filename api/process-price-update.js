@@ -1,3 +1,4 @@
+const { augmentResponse } = require('../lib/resHelper');
 'use strict';
 
 const { verifyAndParseQStashRequest } = require('../lib/qstashVerify');
@@ -30,6 +31,7 @@ function randomWalkStep(currentPrice, volatility, trendBias) {
 }
 
 module.exports = async (req, res) => {
+  augmentResponse(res);
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
