@@ -36,6 +36,7 @@ const { handleRetryButton } = require('../lib/commands/retryHandler');
 const { handlePortfolio } = require('../lib/commands/trading/portfolio');
 const { handleMarket, handleMarketEvent, handleMarketSetPrice } = require('../lib/commands/trading/market');
 const { handleBuy, handleSell } = require('../lib/commands/trading/buysell');
+const { handleShop, handleShopBuy, handleLeak } = require('../lib/commands/trading/shop');
 const { handlePosisi } = require('../lib/commands/trading/posisi');
 const { handlePinjam, handleBayarUtang, handleDebt, handleDebtApprove } = require('../lib/commands/trading/debt');
 const { handleGrant } = require('../lib/commands/trading/grant');
@@ -318,6 +319,15 @@ module.exports = async (req, res) => {
           return;
         case 'sell':
           await handleSell(interaction, res);
+          return;
+        case 'shop':
+          await handleShop(interaction, res);
+          return;
+        case 'shop-buy':
+          await handleShopBuy(interaction, res);
+          return;
+        case 'leak':
+          await handleLeak(interaction, res);
           return;
         case 'posisi':
           await handlePosisi(interaction, res);

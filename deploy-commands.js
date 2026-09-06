@@ -529,6 +529,49 @@ const commands = [
     ],
   },
   {
+    name: 'shop',
+    description: 'Lihat katalog shop (utilitas, kosmetik, luxury)',
+    type: 1,
+    options: [
+      {
+        name: 'kategori',
+        description: 'Filter kategori tertentu (kosongkan untuk lihat semua)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Utilitas', value: 'utility' },
+          { name: 'Kosmetik', value: 'cosmetic' },
+          { name: 'Supercar & Hypercar', value: 'supercar' },
+          { name: 'Superbike', value: 'superbike' },
+          { name: 'Motorsport & Race Cars', value: 'motorsport' },
+          { name: 'Properti', value: 'property' },
+          { name: 'Fleet Mewah', value: 'fleet' },
+          { name: 'Flex-Art & Collectibles', value: 'art' },
+          { name: 'Ultimate Flex', value: 'ultimate' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'shop-buy',
+    description: 'Beli item dari shop (utilitas, kosmetik, atau luxury)',
+    type: 1,
+    options: [
+      {
+        name: 'item',
+        description: 'Kode item (lihat /shop untuk daftar lengkap)',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'leak',
+    description: 'Pakai 1 Sinyal Orang Dalam untuk mengintip event pasar aktif',
+    type: 1,
+    options: [],
+  },
+  {
     name: 'posisi',
     description: 'Pasang atau batalkan order pending (ancang-ancang sebelum event)',
     type: 1,
