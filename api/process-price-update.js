@@ -8,21 +8,11 @@ const { CONFIG } = require('../lib/config');
 const { logErrorToChannel } = require('../lib/errorLog');
 
 /* =========================================================================
- * /api/process-price-update — dipanggil QStash SCHEDULE (cron recurring,
- * di-setup SEKALI lewat scripts/setup-price-schedule.js dari Termux, BUKAN
- * otomatis jalan begitu kode di-deploy).
- *
- * Menjalankan random walk harga normal (BUKAN event) untuk semua aset:
- * harga baru = harga lama * (1 + acak antara -volatility s/d +volatility),
- * dengan trendBias sebagai pergeseran tambahan (dipakai KRYN buat efek
- * "musim" bullish/bearish jangka panjang).
+ * /api/process-price-update — dipanggil QStash SCHEDULE
  * ========================================================================= */
 
-module.exports.config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Note: bodyParser bawaan Vercel dibiarkan aktif agar req.body ter-parse 
+// dengan benar saat masuk ke verifikasi QStash signature.
 
 function randomWalkStep(currentPrice, volatility, trendBias) {
   const randomFactor = (Math.random() * 2 - 1) * volatility;
@@ -32,13 +22,16 @@ function randomWalkStep(currentPrice, volatility, trendBias) {
 
 module.exports = async (req, res) => {
   augmentResponse(res);
+  
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
+  // Verifikasi signature dari QStash
   const verified = await verifyAndParseQStashRequest(req, 'process-price-update');
   if (!verified.ok) {
+    console.error('[process-price-update] Verification failed:', verified.error);
     res.status(verified.status).json({ error: verified.error });
     return;
   }
@@ -54,13 +47,7 @@ module.exports = async (req, res) => {
 
     console.log('[process-price-update] Prices updated:', JSON.stringify(updates));
 
-    // Random trigger event otomatis — TERPISAH dari random walk harga di
-    // atas. Kalau kena (RANDOM_EVENT_CHANCE, default 15%), event dipicu
-    // via triggerMarketEventFlow (fungsi SAMA dengan /market-event manual)
-    // — jadi harga aset yang BARU SAJA di-update di atas akan berubah
-    // LAGI sekali lagi nanti (60 detik dari sekarang) via event terpisah.
-    // Ini bukan bug — event memang dimaksudkan sebagai lapisan pergerakan
-    // TAMBAHAN di atas random walk normal, bukan pengganti.
+    // Random trigger event otomatis
     let eventTriggered = null;
     if (Math.random() < CONFIG.RANDOM_EVENT_CHANCE) {
       const randomType = Math.random() < 0.5 ? 'BULLISH' : 'BEARISH';
