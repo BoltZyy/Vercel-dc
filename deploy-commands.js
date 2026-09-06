@@ -442,6 +442,14 @@ const commands = [
     name: 'portfolio',
     description: 'Lihat saldo ZYC, kepemilikan aset, dan estimasi nilai total',
     type: 1,
+    options: [
+      {
+        name: 'target',
+        description: 'User lain yang ingin diintip (opsional)',
+        type: 6,
+        required: false,
+      },
+    ],
   },
   {
     name: 'market',
@@ -570,6 +578,129 @@ const commands = [
     description: 'Pakai 1 Sinyal Orang Dalam untuk mengintip event pasar aktif',
     type: 1,
     options: [],
+  },
+  {
+    name: 'bank-list',
+    description: 'Lihat daftar bank staking, bunga, dan ketentuannya',
+    type: 1,
+    options: [],
+  },
+  {
+    name: 'bank-deposit',
+    description: 'Deposit ZYC ke bank pilihan',
+    type: 1,
+    options: [
+      {
+        name: 'bank',
+        description: 'Kode bank',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'Central ZYC Reserve (1.5%/hari, tanpa lock)', value: 'CENTRAL_RESERVE' },
+          { name: 'Krynithian Commercial (4.0%/hari, lock 2 hari)', value: 'KRYNITHIAN_COMMERCIAL' },
+          { name: 'Volt Apex Neo-Bank (8.0%/hari, lock 3 hari)', value: 'VOLT_APEX_NEOBANK' },
+        ],
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah ZYC yang mau dideposit',
+        type: 4,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'bank-status',
+    description: 'Cek status deposito aktif dan bunga yang sudah terkumpul',
+    type: 1,
+    options: [],
+  },
+  {
+    name: 'bank-withdraw',
+    description: 'Tarik modal + bunga dari deposito aktif (kena denda jika masih lock)',
+    type: 1,
+    options: [],
+  },
+  {
+    name: 'work',
+    description: 'Kerja untuk dapat ZYC (butuh stamina)',
+    type: 1,
+    options: [
+      {
+        name: 'job',
+        description: 'Jenis pekerjaan',
+        type: 3,
+        required: true,
+        choices: [
+          { name: '📺 Streamer Discord / VTuber (aman, 20-50 ZYC)', value: 'streamer' },
+          { name: '🔧 Mekanik (aman, 20-50 ZYC)', value: 'mekanik' },
+          { name: '📦 Kurir (aman, 20-50 ZYC)', value: 'kurir' },
+          { name: '🎮 Joki (spekulasi, 70% dapat 60-90 ZYC)', value: 'joki' },
+          { name: '🎫 Calo (spekulasi, 50% dapat 80-120 ZYC / zonk)', value: 'calo' },
+          { name: '📱 Admin Freestyle (meme, 15-60 ZYC)', value: 'admin-fstyle' },
+          { name: '🌾 Ternak Akun (meme, 10-100 ZYC)', value: 'ternak-akun' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'dice',
+    description: 'Judi tebak angka 1-6 (house edge 5%, payout 5.7x)',
+    type: 1,
+    options: [
+      {
+        name: 'bet',
+        description: 'Jumlah taruhan (angka, atau "all in")',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'tebakan',
+        description: 'Tebakan angka 1-6',
+        type: 4,
+        required: true,
+        min_value: 1,
+        max_value: 6,
+      },
+    ],
+  },
+  {
+    name: 'slots',
+    description: 'Slot machine — 3 sama = jackpot 5x, 2 sama = 1.5x',
+    type: 1,
+    options: [
+      {
+        name: 'bet',
+        description: 'Jumlah taruhan (angka, atau "all in")',
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'roulette',
+    description: 'Roulette — tebak warna/ganjil-genap, payout 1.9x',
+    type: 1,
+    options: [
+      {
+        name: 'bet',
+        description: 'Jumlah taruhan (angka, atau "all in")',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'pilihan',
+        description: 'Pilihan taruhan',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'Red 🔴', value: 'red' },
+          { name: 'Black ⬛', value: 'black' },
+          { name: 'Odd 🔢', value: 'odd' },
+          { name: 'Even 🔢', value: 'even' },
+        ],
+      },
+    ],
   },
   {
     name: 'posisi',

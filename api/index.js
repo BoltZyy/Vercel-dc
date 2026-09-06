@@ -37,6 +37,11 @@ const { handlePortfolio } = require('../lib/commands/trading/portfolio');
 const { handleMarket, handleMarketEvent, handleMarketSetPrice } = require('../lib/commands/trading/market');
 const { handleBuy, handleSell } = require('../lib/commands/trading/buysell');
 const { handleShop, handleShopBuy, handleLeak } = require('../lib/commands/trading/shop');
+const { handleBankList, handleBankDeposit, handleBankStatus, handleBankWithdraw } = require('../lib/commands/trading/bank');
+const { handleWork } = require('../lib/commands/trading/work');
+const { handleDice } = require('../lib/commands/trading/dice');
+const { handleSlots } = require('../lib/commands/trading/slots');
+const { handleRoulette } = require('../lib/commands/trading/roulette');
 const { handlePosisi } = require('../lib/commands/trading/posisi');
 const { handlePinjam, handleBayarUtang, handleDebt, handleDebtApprove } = require('../lib/commands/trading/debt');
 const { handleGrant } = require('../lib/commands/trading/grant');
@@ -328,6 +333,30 @@ module.exports = async (req, res) => {
           return;
         case 'leak':
           await handleLeak(interaction, res);
+          return;
+        case 'bank-list':
+          await handleBankList(interaction, res);
+          return;
+        case 'bank-deposit':
+          await handleBankDeposit(interaction, res);
+          return;
+        case 'bank-status':
+          await handleBankStatus(interaction, res);
+          return;
+        case 'bank-withdraw':
+          await handleBankWithdraw(interaction, res);
+          return;
+        case 'work':
+          await handleWork(interaction, res);
+          return;
+        case 'dice':
+          await handleDice(interaction, res);
+          return;
+        case 'slots':
+          await handleSlots(interaction, res);
+          return;
+        case 'roulette':
+          await handleRoulette(interaction, res);
           return;
         case 'posisi':
           await handlePosisi(interaction, res);
