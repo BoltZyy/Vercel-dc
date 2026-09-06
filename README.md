@@ -4,9 +4,10 @@
 
 <p>
   <img alt="platform" src="https://img.shields.io/badge/platform-Vercel%20Serverless-black">
-  <img alt="commands" src="https://img.shields.io/badge/commands-27-blueviolet">
+  <img alt="commands" src="https://img.shields.io/badge/commands-48-blueviolet">
   <img alt="queue" src="https://img.shields.io/badge/queue-Upstash%20QStash-00e9a3">
   <img alt="storage" src="https://img.shields.io/badge/storage-Upstash%20Redis-dc382d">
+  <img alt="economy" src="https://img.shields.io/badge/economy-ZYC%20Trading-f1c40f">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-yellow">
 </p>
 
@@ -32,6 +33,8 @@ Wajar kalau nanya "kenapa nggak pakai BotGhost/Wick/dashboard bot instan aja?" �
 - [Daftar Command](#-daftar-command)
 - [Environment Variables](#-environment-variables)
 - [Fitur-Fitur Utama](#-fitur-fitur-utama)
+- [Ekonomi Trading ZYC](#-ekonomi-trading-zyc)
+- [Shop, Kosmetik & Money Sink](#-shop-kosmetik--money-sink)
 - [Arsitektur QStash](#-arsitektur-qstash-kenapa-ribet-amat)
 - [Langkah Deploy](#-langkah-deploy)
 - [Catatan Region QStash](#-catatan-region-qstash)
@@ -50,11 +53,16 @@ package.json
 vercel.json
 deploy-commands.js
 api/
-  index.js                  <- Webhook endpoint (Discord Interactions URL)
-  process-ai.js              <- Dipanggil QStash -> eksekusi AI -> PATCH ke Discord
-  process-status.js           <- Dipanggil QStash -> eksekusi /status -> PATCH ke Discord
-  process-remind.js            <- Dipanggil QStash (setelah delay) -> kirim reminder
-  process-export.js             <- Dipanggil QStash -> build file -> PATCH ke Discord
+  index.js                        <- Webhook endpoint (Discord Interactions URL)
+  process-ai.js                    <- Dipanggil QStash -> eksekusi AI -> PATCH ke Discord
+  process-status.js                 <- Dipanggil QStash -> eksekusi /status -> PATCH ke Discord
+  process-remind.js                  <- Dipanggil QStash (setelah delay) -> kirim reminder
+  process-export.js                   <- Dipanggil QStash -> build file -> PATCH ke Discord
+  process-price-update.js              <- Dipanggil QStash SCHEDULE (cron 30 menit) -> random walk harga
+  process-market-event.js               <- Dipanggil QStash (delay 60 detik) -> ubah harga event + eksekusi order pending
+  process-market-event-trigger.js        <- Dipanggil QStash -> kirim pengumuman + jadwalkan process-market-event
+scripts/
+  setup-price-schedule.js                 <- Jalankan SEKALI dari Termux, daftarkan QStash Schedule
 lib/
   config.js                        <- ENV terpusat
   aiEngine.js                        <- Client Saucepan Proxy (OpenAI-compatible)
@@ -66,7 +74,10 @@ lib/
   errorLog.js                                    <- Notifikasi error ke channel + audit log
   timeParser.js                                    <- Parser waktu relatif & absolut (/remind)
   redis.js                                           <- Conversation, blocklist, stats, override, dst
-  commands.js                                          <- processAiJob (eksekusi AI sesungguhnya)
+  tradingAssets.js                                     <- Definisi 4 aset trading (NORA/VOLT/KRYN/PLUM)
+  trading.js                                             <- Inti ekonomi ZYC: saldo, portfolio, pinjaman, event, shop
+  shopItems.js                                             <- Katalog shop + validator syarat pembelian
+  commands.js                                                <- processAiJob (eksekusi AI sesungguhnya)
   commands/
     avatar.js - userinfo.js - ping.js - say.js
     moderation.js         <- /block /unblock /blocklist /maintenance /reset
@@ -86,6 +97,15 @@ lib/
     warn.js                                            <- /warn
     auditLog.js                                          <- /audit-log
     retryHandler.js                                        <- Handler tombol Retry
+    trading/
+      portfolio.js  <- /portfolio (saldo, aset, kosmetik, koleksi mewah)
+      market.js       <- /market (harga & tren 4 aset)
+      buysell.js         <- /buy /sell (instan di harga sekarang)
+      posisi.js             <- /posisi (order pending, ancang-ancang sebelum event)
+      debt.js                 <- /pinjam /bayar-utang /debt /debt-approve
+      grant.js                  <- /grant (Owner, koreksi saldo/aset manual)
+      trade.js                    <- /trade-* (barter antar-user)
+      shop.js                        <- /shop /shop-buy /leak (belanja & consumable)
 ```
 
 ---
@@ -120,6 +140,38 @@ lib/
 | `/timezone {waktu} {dari} {ke}` | Semua | Konversi waktu antar zona (nama populer/IANA) |
 | `/remind {waktu} {pesan}` | Semua | Jadwalkan pengingat -- relatif (`10m`,`2h`,`1d`) atau absolut |
 | `/leaderboard {periode?} {metric?}` | Semua | Top user pemakaian bot (sepanjang waktu / hari ini) |
+
+</details>
+
+<details open>
+<summary><strong>💹 Trading & Ekonomi ZYC</strong></summary>
+
+| Command | Akses | Keterangan |
+|---|---|---|
+| `/portfolio` | Semua | Saldo, kepemilikan aset, kosmetik profil, koleksi mewah |
+| `/market` | Semua | Harga & tren 4 aset (NORA/VOLT/KRYN/PLUM) saat ini |
+| `/buy {aset} {jumlah}` | Semua | Beli aset instan di harga sekarang |
+| `/sell {aset} {jumlah}` | Semua | Jual aset instan di harga sekarang |
+| `/posisi {aset} {jumlah?}` | Semua | Pasang/batalkan order pending -- ancang-ancang sebelum event pasar |
+| `/pinjam {jumlah}` | Semua | Pinjam ZYC tanpa bunga, tenor 7 hari (default) |
+| `/bayar-utang {jumlah}` | Semua | Cicil/lunasi pinjaman aktif |
+| `/debt` | Semua | Lihat status pinjaman & bad debt milikmu |
+| `/debt-approve {user}` | Owner | Hapus bad debt user yang tidak bisa ditagih lagi |
+| `/grant {user} {tipe} {kode?} {jumlah}` | Owner | Koreksi manual saldo/aset (boleh negatif) |
+| `/trade-add-item`, `/trade-request-item`, `/trade-send`, `/trade-accept`, `/trade-reject`, `/trade-clear` | Semua | Barter antar-user via keranjang bertahap, TTL 10 menit |
+| `/market-event {tipe} {aset?}` | Owner | Picu event pasar manual (pengumuman T-1 menit) |
+| `/market-set-price {aset} {harga}` | Owner | Set harga aset manual (override random walk) |
+
+</details>
+
+<details open>
+<summary><strong>🛍️ Shop & Kosmetik</strong></summary>
+
+| Command | Akses | Keterangan |
+|---|---|---|
+| `/shop {kategori?}` | Semua | Lihat katalog shop -- utilitas, kosmetik, atau kategori luxury tertentu |
+| `/shop-buy {item}` | Semua | Beli item dari shop. Item luxury bersifat **permanen**, tidak bisa dijual balik |
+| `/leak` | Semua | Pakai 1x 🕵️ Sinyal Orang Dalam untuk mengintip arah event pasar aktif |
 
 </details>
 
@@ -178,8 +230,12 @@ lib/
 | `QSTASH_NEXT_SIGNING_KEY` | ✅ | Dari Upstash Console -> QStash |
 | `QSTASH_URL` | opsional | Default `https://qstash-eu-central-1.upstash.io`. Ganti ke `https://qstash.upstash.io` untuk region US |
 | `PUBLIC_BASE_URL` | ✅ | URL project Vercel ini sendiri, tanpa trailing slash |
+| `STARTING_BALANCE` | opsional | Default `10000` -- modal awal ZYC untuk user baru |
+| `LOAN_DUE_DAYS` | opsional | Default `7` -- tenor pinjaman sebelum aset disita otomatis |
+| `MARKET_ANNOUNCEMENT_CHANNEL_ID` | opsional | Channel pengumuman event pasar (fallback ke `LOG_CHANNEL_ID`) |
+| `RANDOM_EVENT_CHANCE` | opsional | Default `0.15` (15%) -- peluang event pasar acak tiap price-update |
 
-*Redis opsional secara teknis (fail-open), tapi **wajib** untuk blocklist, rate-limit, `/say` logging, conversation memory, `/stats`, `/model set`, `/personality set`, `/riwayat`, `/leaderboard`, `/warn`, `/audit-log`, `/export`, `/remind`, dan tombol Retry -- tanpa Redis, fitur-fitur itu senyap tidak aktif (bot inti tetap jalan).
+*Redis opsional secara teknis (fail-open), tapi **wajib** untuk blocklist, rate-limit, `/say` logging, conversation memory, `/stats`, `/model set`, `/personality set`, `/riwayat`, `/leaderboard`, `/warn`, `/audit-log`, `/export`, `/remind`, tombol Retry, dan **seluruh sistem trading ZYC & shop** -- tanpa Redis, fitur-fitur itu senyap tidak aktif (bot inti tetap jalan).
 
 </details>
 
@@ -240,6 +296,90 @@ Setiap error di `processAiJob` (AI gagal) atau di catch block utama `api/index.j
 
 ---
 
+## 💹 Ekonomi Trading ZYC
+
+> Sistem ekonomi fiktif lengkap -- bukan sekadar "poin klaim harian". Ada 4 aset dengan karakter beda, event pasar acak, pinjaman, sampai bad debt. Semuanya jalan murni di atas Redis, tanpa exchange rate ke uang asli apa pun.
+
+<details open>
+<summary><strong>📈 4 Aset & Random Walk Harga</strong></summary>
+
+| Aset | Karakter | Cocok Untuk |
+|---|---|---|
+| 🟡 **NORA** (Norium) | Volatilitas rendah, stabil | Main aman, parkir modal |
+| ⚡ **VOLT** (Voltacoin) | Volatilitas tinggi, ekstrem | Spekulasi jangka pendek |
+| 📊 **KRYN** | Trending, ada `trendBias` musiman | Baca tren jangka menengah |
+| 💜 **PLUM** | Paling sensitif terhadap event pasar | Gambling seputar pengumuman |
+
+Harga tiap aset di-random-walk otomatis lewat `process-price-update.js`, dipicu QStash **Schedule** (cron, bukan job biasa) setiap 30 menit. Tiap update juga punya 15% kemungkinan (`RANDOM_EVENT_CHANCE`) memicu event pasar acak.
+
+</details>
+
+<details open>
+<summary><strong>🎲 Event Pasar & Order Pending (`/posisi`)</strong></summary>
+
+Event pasar (naik/turun tajam pada aset tertentu) bisa terjadi otomatis (random) atau dipicu manual Owner lewat `/market-event`. Begitu event terpicu, bot mengumumkan **T-1 menit** ke `MARKET_ANNOUNCEMENT_CHANNEL_ID` lengkap dengan "prediksi" -- yang sengaja **acak dan tidak terkait event asli**, murni elemen gambling.
+
+`/posisi` memungkinkan user pasang ancang-ancang **sebelum** tahu hasil event: order dieksekusi di harga **setelah** event berlangsung, bukan saat dipasang. Maksimal 1 order aktif per aset per user, dan divalidasi ulang saat eksekusi (order bisa batal kalau saldo berubah di antara pemasangan dan eksekusi).
+
+</details>
+
+<details>
+<summary><strong>💳 Pinjaman, Sita Otomatis & Bad Debt</strong></summary>
+
+`/pinjam {jumlah}` -- bebas nominal, **tanpa bunga**, tenor `LOAN_DUE_DAYS` hari (default 7). Status nunggak dicek **setiap kali** user memanggil command trading apa pun (bukan cron terpisah) -- begitu terdeteksi lewat tenor:
+
+1. Aset disita otomatis, dimulai dari yang **termahal**.
+2. Kalau nilai sitaan cukup menutup utang -- lunas, sisa aset (kalau ada) tetap milik user.
+3. Kalau tidak cukup -- sisa utang berubah jadi **bad debt**, butuh `/debt-approve` (Owner) untuk dihapuskan secara manual.
+
+</details>
+
+<details>
+<summary><strong>🤝 Trade Antar-User (Barter)</strong></summary>
+
+Sistem barter pakai keranjang bertahap: `/trade-add-item` (barang yang kamu tawarkan) dan `/trade-request-item` (barang yang kamu minta), maksimal 5 item per sisi. Hanya boleh **1 keranjang aktif** per user secara global. Setelah siap, `/trade-send` mengirim penawaran ke user tujuan, yang membalas lewat `/trade-accept` atau `/trade-reject` (command terpisah, bukan tombol) -- penawaran kedaluwarsa otomatis dalam 10 menit. Sisi "minta" boleh dikosongkan untuk memberi barang secara cuma-cuma (gift sepihak).
+
+</details>
+
+---
+
+## 🛍️ Shop, Kosmetik & Money Sink
+
+> Tempat ZYC "menguap" dari peredaran. Prinsipnya sederhana: item luxury tidak pernah bisa dijual balik -- begitu dibeli, ZYC-nya hilang permanen dari ekonomi, mencegah inflasi tanpa perlu mengubah sistem trading/utang inti.
+
+<details open>
+<summary><strong>🕵️ Utilitas & Consumable</strong></summary>
+
+Saat ini baru **🕵️ Sinyal Orang Dalam** (`LEAK_TOKEN`) -- item sekali pakai. Dipakai lewat `/leak`, membaca event pasar aktif (data sesungguhnya, bukan prediksi acak seperti pengumuman publik) dan menampilkan arah pergerakannya sebelum diumumkan. Kalau belum ada event aktif, bot jujur bilang belum ada sinyal -- tidak ada info palsu yang dipaksakan.
+
+</details>
+
+<details open>
+<summary><strong>🎨 Kosmetik Profil (Social Flexing)</strong></summary>
+
+Item `equipable` (warna tema embed, gelar/title) langsung tampil di header `/portfolio` begitu dipasang -- tidak butuh Discord Role sama sekali, murni disimpan di hash `trading:cosmetics:{userId}`. Contoh: 🎨 Tema Eclair Gold/Cyber Neon (ganti warna border embed), 🐋 Zypto Whale / 📉 Bear Market Survivor (gelar di judul portfolio).
+
+</details>
+
+<details open>
+<summary><strong>🏎️ Luxury Collectibles & Validator Bertingkat</strong></summary>
+
+Kategori terbesar: supercar, superbike, motorsport, properti, fleet mewah, flex-art, sampai **Ultimate Flex** (Space Station). Semua **permanen** begitu dibeli -- tidak ada mekanisme jual balik, murni piala kekayaan yang tampil di field "🏝️ Koleksi Mewah" pada `/portfolio`.
+
+Beberapa item flagship punya syarat berlapis sebelum bisa dibeli lewat `/shop-buy`, dicek berurutan di `lib/shopItems.js`:
+
+1. **Saldo cukup** -- gerbang paling dasar, semua item kena ini.
+2. **Bebas utang** (`requiresDebtFree`) -- dealer barang mewah "menolak" transaksi kalau kamu masih punya pinjaman aktif.
+3. **Prasyarat kepemilikan** (`requiredItems`) -- misal Ferrari LaFerrari/F80 mewajibkan sudah punya Ferrari Roma lebih dulu; Ninja H2R cukup salah satu dari 3 motor entry-level.
+4. **Liquidity check** (`minReserveCash`) -- sisa saldo setelah checkout wajib menyisakan persentase minimum dari harga barang (mis. Bugatti Chiron wajib sisa 15%), supaya user tidak checkout sampai saldo minus mepet.
+5. **Syarat kategori** (`requiredCategories`) -- misal Private Jet mewajibkan sudah punya minimal 1 Properti; Space Station mewajibkan kombinasi Jet/Yacht **dan** Properti sekaligus.
+
+Semua barang di shop **tidak menyentuh logika inti trading/utang** -- checkout cuma memotong saldo cash lewat jalur `adjustBalance` yang sudah ada, tidak pernah mengubah harga aset, saldo pinjaman, atau state Redis lain di luar `trading:inventory:{userId}` dan `trading:cosmetics:{userId}`.
+
+</details>
+
+---
+
 ## 🏗️ Arsitektur QStash (kenapa ribet amat?)
 
 Command yang butuh network call lama (panggil AI, atau beberapa network check paralel untuk `/status`) **tidak bisa** diproses langsung di request pertama -- Vercel Node Functions **tidak menjamin** kerja async lanjut berjalan setelah response HTTP pertama terkirim ke client. Solusinya, alurnya dipecah jadi dua request independen:
@@ -263,6 +403,28 @@ QStash --> POST /api/process-ai . process-status . process-remind . process-expo
 Command instan (`/model`, `/avatar`, `/userinfo`, `/ping`, `/say`, `/stats`, `/riwayat`, `/coinflip`, `/roll`, `/ship`, `/timezone`, `/warn`, `/audit-log`, `/personality`, dan semua command moderasi) tidak lewat alur ini -- dijawab langsung (Type 4) dalam response pertama.
 
 <details>
+<summary><strong>⏰ QStash Schedule vs QStash Job biasa (klik untuk detail)</strong></summary>
+
+`process-price-update.js` dipanggil lewat QStash **Schedule** (cron `*/30 * * * *`), bukan `publishJob()` biasa seperti job lainnya -- bedanya penting: Schedule **tidak pernah mengirim body request** (selalu kosong), sementara job biasa selalu membawa payload JSON.
+
+Ini sempat jadi bug nyata: `verifyAndParseQStashRequest` di `lib/qstashVerify.js` awalnya langsung `JSON.parse()` raw body tanpa cek dulu, jadi meledak `"Invalid JSON body"` tiap Schedule terpanggil (signature-nya valid, cuma body-nya memang kosong). Fix-nya: cek dulu apakah raw body (setelah di-trim) panjangnya 0 -- kalau iya, langsung fallback ke `{}` tanpa pernah masuk `JSON.parse()`. Endpoint yang memang butuh payload asli tetap divalidasi normal; yang berubah cuma perlakuan untuk body yang **memang seharusnya kosong**.
+
+</details>
+
+<details>
+<summary><strong>🕒 QStash Schedule perlu didaftarkan manual sekali (klik untuk detail)</strong></summary>
+
+Beda dengan job biasa yang dipublish otomatis dari kode saat dibutuhkan, QStash Schedule harus didaftarkan **sekali** secara manual lewat `scripts/setup-price-schedule.js` (dijalankan langsung dari Termux/local, bukan bagian dari deploy otomatis):
+
+```bash
+QSTASH_TOKEN=xxx PUBLIC_BASE_URL=https://xxx.vercel.app node scripts/setup-price-schedule.js
+```
+
+Sekali terdaftar, Schedule ini permanen jalan di sisi Upstash tanpa perlu didaftarkan ulang -- kecuali kamu ganti `PUBLIC_BASE_URL` (redeploy ke domain baru) atau sengaja mau ubah interval cron-nya.
+
+</details>
+
+<details>
 <summary><strong>Perilaku tanpa Redis dikonfigurasi (klik untuk detail)</strong></summary>
 
 Semua fitur berbasis Redis **fail-open**:
@@ -274,6 +436,7 @@ Semua fitur berbasis Redis **fail-open**:
 - `/stats`, `/leaderboard`, `/audit-log` -> menampilkan pesan "tidak tersedia" / kosong.
 - `/model set`, `/personality set` -> gagal dengan pesan error, tetap pakai ENV default.
 - Tombol Retry -> tidak muncul (pesan error tanpa tombol).
+- Seluruh sistem trading & shop (`/portfolio`, `/buy`, `/sell`, `/pinjam`, `/shop-buy`, dst) -> gagal dengan pesan error eksplisit, tidak fail-silent (uang fiktif tetap butuh integritas data, tidak boleh diam-diam kosong).
 
 </details>
 
@@ -318,11 +481,15 @@ Kalau muncul error `user not found in this region`, ambil ulang `QSTASH_TOKEN` +
 - [ ] Persona per-channel (bukan cuma 1 slot global)
 - [ ] `/whoami` -- status blocked/rate-limit/permission milik pemanggil
 - [ ] Konfirmasi tombol sebelum aksi destruktif (`/reset scope:all`)
+- [ ] Buff temporer trading (mis. badge "Insider" sementara, fee waiver)
+- [ ] `/flex` terpisah kalau daftar koleksi luxury makin panjang untuk ditampilkan di `/portfolio`
 - [x] ~~Retry button saat AI gagal~~ selesai
 - [x] ~~`/leaderboard`, `/coinflip`, `/roll`~~ selesai
 - [x] ~~`/remind {waktu} {pesan}`~~ selesai
 - [x] ~~Export percakapan ke file~~ selesai
 - [x] ~~`/rate`, `/ship`, `/timezone`, `/personality`, `/warn`, `/audit-log`~~ selesai
+- [x] ~~Sistem trading ZYC: 4 aset, event pasar, pinjaman + bad debt, barter antar-user~~ selesai
+- [x] ~~Shop: utilitas (`/leak`), kosmetik profil, luxury collectibles money sink~~ selesai
 - ~~"thinking..." lebih informatif~~ -- dilewati (Discord tidak izinkan custom teks deferred, dan PATCH ganda dianggap tidak worth it)
 
 ---
