@@ -2,7 +2,7 @@
 
 > Bot Discord berbasis HTTP Interactions, jalan sepenuhnya di Vercel Serverless Functions — tanpa gateway/WebSocket, tanpa server yang harus nyala 24/7.
 
-![owner](https://img.shields.io/badge/owner-BoltZy-003366?logo=discord&logoColor=white) ![platform](https://img.shields.io/badge/platform-Vercel%20Serverless-black?logo=vercel&logoColor=white) ![language](https://img.shields.io/badge/language-JavaScript-F7DF1E?logo=javascript&logoColor=black) ![commands](https://img.shields.io/badge/commands-57-blueviolet?logo=gnometerminal&logoColor=white) ![queue](https://img.shields.io/badge/queue-Upstash%20QStash-00e9a3?logo=upstash&logoColor=white) ![storage](https://img.shields.io/badge/storage-Upstash%20Redis-dc382d?logo=redis&logoColor=white) ![economy](https://img.shields.io/badge/economy-ZYC%20Trading-f1c40f?logo=tether&logoColor=black) ![license](https://img.shields.io/badge/license-MIT-yellow?logo=github&logoColor=white)
+![owner](https://img.shields.io/badge/owner-BoltZy-003366?logo=discord&logoColor=white) ![platform](https://img.shields.io/badge/platform-Vercel%20Serverless-black?logo=vercel&logoColor=white) ![language](https://img.shields.io/badge/language-JavaScript-F7DF1E?logo=javascript&logoColor=black) ![commands](https://img.shields.io/badge/commands-57-blueviolet?logo=zcash&logoColor=zec) ![queue](https://img.shields.io/badge/queue-Upstash%20QStash-00e9a3?logo=upstash&logoColor=white) ![storage](https://img.shields.io/badge/storage-Upstash%20Redis-dc382d?logo=redis&logoColor=white) ![economy](https://img.shields.io/badge/economy-ZYC%20Trading-f1c40f?logo=tether&logoColor=black) ![license](https://img.shields.io/badge/license-MIT-yellow?logo=github&logoColor=white)
 
 ---
 
