@@ -42,6 +42,7 @@ const { handleWork } = require('../lib/commands/trading/work');
 const { handleDice } = require('../lib/commands/trading/dice');
 const { handleSlots } = require('../lib/commands/trading/slots');
 const { handleRoulette } = require('../lib/commands/trading/roulette');
+const { handleBypass } = require('../lib/commands/bypass');
 const { handlePosisi } = require('../lib/commands/trading/posisi');
 const { handlePinjam, handleBayarUtang, handleDebt, handleDebtApprove } = require('../lib/commands/trading/debt');
 const { handleGrant } = require('../lib/commands/trading/grant');
@@ -357,6 +358,9 @@ module.exports = async (req, res) => {
           return;
         case 'roulette':
           await handleRoulette(interaction, res);
+          return;
+        case 'bypass':
+          await handleBypass(interaction, res);
           return;
         case 'posisi':
           await handlePosisi(interaction, res);

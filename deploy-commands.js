@@ -619,7 +619,14 @@ const commands = [
     name: 'bank-withdraw',
     description: 'Tarik modal + bunga dari deposito aktif (kena denda jika masih lock)',
     type: 1,
-    options: [],
+    options: [
+      {
+        name: 'pakai_passcard',
+        description: 'Pakai 🎟️ Surat Pelicin Bank untuk pencairan instan tanpa penalti (maks 2x/hari)',
+        type: 5,
+        required: false,
+      },
+    ],
   },
   {
     name: 'work',
@@ -699,6 +706,29 @@ const commands = [
           { name: 'Odd 🔢', value: 'odd' },
           { name: 'Even 🔢', value: 'even' },
         ],
+      },
+    ],
+  },
+  {
+    name: 'bypass',
+    description: '[Owner] Toggle dev bypass mode (stamina, overdue loan, limit order)',
+    type: 1,
+    options: [
+      {
+        name: 'mode',
+        description: 'Aktifkan atau nonaktifkan bypass',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'On', value: 'on' },
+          { name: 'Off', value: 'off' },
+        ],
+      },
+      {
+        name: 'target',
+        description: 'User yang mau ditoggle (opsional, default diri sendiri)',
+        type: 6,
+        required: false,
       },
     ],
   },
