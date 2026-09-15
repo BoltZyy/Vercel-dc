@@ -575,9 +575,16 @@ const commands = [
   },
   {
     name: 'leak',
-    description: 'Pakai 1 Sinyal Orang Dalam untuk mengintip event pasar aktif',
+    description: 'Cek sentimen makro pasar (gratis) + buka Alpha Intel eksklusif (opsional)',
     type: 1,
-    options: [],
+    options: [
+      {
+        name: 'buka_intel',
+        description: 'Konsumsi 1x Insider Pass untuk buka Alpha Intel spesifik + bypass cooldown',
+        type: 5,
+        required: false,
+      },
+    ],
   },
   {
     name: 'bank-list',
@@ -587,44 +594,126 @@ const commands = [
   },
   {
     name: 'bank-deposit',
-    description: 'Deposit ZYC ke bank pilihan',
+    description: 'Setor ZYC ke Tabungan Reguler atau Deposito Bertingkat',
     type: 1,
     options: [
       {
-        name: 'bank',
-        description: 'Kode bank',
+        name: 'type',
+        description: 'Jenis rekening',
         type: 3,
         required: true,
+        choices: [
+          { name: 'Tabungan Reguler (0.5%/hari, tanpa lock, klaim manual)', value: 'REGULAR' },
+          { name: 'Deposito Bertingkat (pilih bank di parameter bank)', value: 'TIER_DEPOSIT' },
+        ],
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah ZYC yang mau disetor',
+        type: 4,
+        required: true,
+      },
+      {
+        name: 'bank',
+        description: 'Kode bank (WAJIB kalau type=TIER_DEPOSIT, diabaikan kalau REGULAR)',
+        type: 3,
+        required: false,
         choices: [
           { name: 'Central ZYC Reserve (1.5%/hari, tanpa lock)', value: 'CENTRAL_RESERVE' },
           { name: 'Krynithian Commercial (4.0%/hari, lock 2 hari)', value: 'KRYNITHIAN_COMMERCIAL' },
           { name: 'Volt Apex Neo-Bank (8.0%/hari, lock 3 hari)', value: 'VOLT_APEX_NEOBANK' },
         ],
       },
-      {
-        name: 'jumlah',
-        description: 'Jumlah ZYC yang mau dideposit',
-        type: 4,
-        required: true,
-      },
     ],
   },
   {
     name: 'bank-status',
-    description: 'Cek status deposito aktif dan bunga yang sudah terkumpul',
+    description: 'Cek status Tabungan Reguler atau Deposito Bertingkat',
     type: 1,
-    options: [],
+    options: [
+      {
+        name: 'type',
+        description: 'Jenis rekening (default: Deposito Bertingkat)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Tabungan Reguler', value: 'REGULAR' },
+          { name: 'Deposito Bertingkat', value: 'TIER_DEPOSIT' },
+        ],
+      },
+    ],
   },
   {
     name: 'bank-withdraw',
-    description: 'Tarik modal + bunga dari deposito aktif (kena denda jika masih lock)',
+    description: 'Tarik dari Tabungan Reguler atau Deposito Bertingkat',
+    type: 1,
+    options: [
+      {
+        name: 'type',
+        description: 'Jenis rekening (default: Deposito Bertingkat)',
+        type: 3,
+        required: false,
+        choices: [
+          { name: 'Tabungan Reguler', value: 'REGULAR' },
+          { name: 'Deposito Bertingkat', value: 'TIER_DEPOSIT' },
+        ],
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah ZYC ditarik (WAJIB kalau type=REGULAR, diabaikan kalau TIER_DEPOSIT -- selalu tarik semua)',
+        type: 4,
+        required: false,
+      },
+      {
+        name: 'pakai_passcard',
+        description: 'Pakai 🎟️ Advanced Passcard untuk pencairan instan tanpa penalti (maks 2x/hari, hanya utk TIER_DEPOSIT)',
+        type: 5,
+        required: false,
+      },
+    ],
+  },
+  {
+    name: 'bank-claim',
+    description: 'Klaim manual bunga Tabungan Reguler (cooldown 24 jam)',
     type: 1,
     options: [
       {
         name: 'pakai_passcard',
-        description: 'Pakai 🎟️ Surat Pelicin Bank untuk pencairan instan tanpa penalti (maks 2x/hari)',
+        description: 'Pakai 🎟️ Advanced Passcard untuk klaim instan tanpa cooldown (maks 2x/hari)',
         type: 5,
         required: false,
+      },
+    ],
+  },
+  {
+    name: 'gacha',
+    description: 'Tarik gacha untuk cash, item, atau Founder Shares eksklusif',
+    type: 1,
+    options: [
+      {
+        name: 'pull',
+        description: 'Jumlah pull (biaya flat 4.000 ZYC/pull, tanpa diskon)',
+        type: 3,
+        required: true,
+        choices: [
+          { name: '1x (4.000 ZYC)', value: '1' },
+          { name: '5x (20.000 ZYC)', value: '5' },
+          { name: '10x (40.000 ZYC)', value: '10' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'equip',
+    description: 'Pasang Buff Title dari Founder Share yang kamu miliki',
+    type: 1,
+    options: [
+      {
+        name: 'title',
+        description: 'Nama Buff Title (cuma menampilkan yang kamu miliki)',
+        type: 3,
+        required: true,
+        autocomplete: true,
       },
     ],
   },

@@ -37,7 +37,9 @@ const { handlePortfolio } = require('../lib/commands/trading/portfolio');
 const { handleMarket, handleMarketEvent, handleMarketSetPrice } = require('../lib/commands/trading/market');
 const { handleBuy, handleSell } = require('../lib/commands/trading/buysell');
 const { handleShop, handleShopBuy, handleLeak } = require('../lib/commands/trading/shop');
-const { handleBankList, handleBankDeposit, handleBankStatus, handleBankWithdraw } = require('../lib/commands/trading/bank');
+const { handleBankList, handleBankDeposit, handleBankStatus, handleBankWithdraw, handleBankClaim } = require('../lib/commands/trading/bank');
+const { handleGacha } = require('../lib/commands/trading/gacha');
+const { handleEquip } = require('../lib/commands/trading/equip');
 const { handleWork } = require('../lib/commands/trading/work');
 const { handleDice } = require('../lib/commands/trading/dice');
 const { handleSlots } = require('../lib/commands/trading/slots');
@@ -172,6 +174,24 @@ module.exports = async (req, res) => {
   }
 
   // --- 3. Slash command dispatch ---
+  // Nilai numerik 4 = APPLICATION_COMMAND_AUTOCOMPLETE (dokumentasi resmi
+  // Discord). Dipakai literal karena belum ada verifikasi apakah
+  // InteractionType package versi terpasang punya named constant untuk
+  // ini — proyek ini belum pernah pakai autocomplete sebelumnya.
+  if (interaction.type === 4) {
+    const commandName = interaction.data?.name;
+    if (commandName === 'equip') {
+      const { handleEquipAutocomplete } = require('../lib/commands/trading/equip');
+      await handleEquipAutocomplete(interaction, res);
+      return;
+    }
+    // Command lain belum implementasikan autocomplete — balas choices
+    // kosong daripada diam (Discord expect response type 8 tetap harus
+    // dikirim untuk interaction type ini, meski isinya kosong).
+    res.status(200).json({ type: 8, data: { choices: [] } });
+    return;
+  }
+
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
     const commandName = interaction.data?.name;
     const invokerId = getInvokerId(interaction);
@@ -346,6 +366,15 @@ module.exports = async (req, res) => {
           return;
         case 'bank-withdraw':
           await handleBankWithdraw(interaction, res);
+          return;
+        case 'bank-claim':
+          await handleBankClaim(interaction, res);
+          return;
+        case 'gacha':
+          await handleGacha(interaction, res);
+          return;
+        case 'equip':
+          await handleEquip(interaction, res);
           return;
         case 'work':
           await handleWork(interaction, res);
