@@ -666,7 +666,7 @@ const commands = [
       },
       {
         name: 'pakai_passcard',
-        description: 'Pakai 🎟️ Advanced Passcard untuk pencairan instan tanpa penalti (maks 2x/hari, hanya utk TIER_DEPOSIT)',
+        description: 'Pakai 🎟️ Advanced Passcard untuk pencairan instan tanpa penalti (maks 2x/hari)',
         type: 5,
         required: false,
       },
