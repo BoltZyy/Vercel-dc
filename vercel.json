@@ -24,6 +24,12 @@
     },
     "api/process-market-event-trigger.js": {
       "maxDuration": 60
+    },
+    "api/process-gacha.js": {
+      "maxDuration": 60
+    },
+    "api/process-dividend.js": {
+      "maxDuration": 60
     }
   }
 }
