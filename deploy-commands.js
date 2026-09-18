@@ -718,6 +718,12 @@ const commands = [
     ],
   },
   {
+    name: 'inventory',
+    description: 'Lihat Buff Titles, Consumables, dan Koleksi Mewah kamu (hanya kamu yang lihat)',
+    type: 1,
+    options: [],
+  },
+  {
     name: 'work',
     description: 'Kerja untuk dapat ZYC (butuh stamina)',
     type: 1,

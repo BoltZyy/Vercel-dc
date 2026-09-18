@@ -40,6 +40,7 @@ const { handleShop, handleShopBuy, handleLeak } = require('../lib/commands/tradi
 const { handleBankList, handleBankDeposit, handleBankStatus, handleBankWithdraw, handleBankClaim } = require('../lib/commands/trading/bank');
 const { handleGacha } = require('../lib/commands/trading/gacha');
 const { handleEquip } = require('../lib/commands/trading/equip');
+const { handleInventory, handleInventoryTabSwitch } = require('../lib/commands/trading/inventory');
 const { handleWork } = require('../lib/commands/trading/work');
 const { handleDice } = require('../lib/commands/trading/dice');
 const { handleSlots } = require('../lib/commands/trading/slots');
@@ -376,6 +377,9 @@ module.exports = async (req, res) => {
         case 'equip':
           await handleEquip(interaction, res);
           return;
+        case 'inventory':
+          await handleInventory(interaction, res);
+          return;
         case 'work':
           await handleWork(interaction, res);
           return;
@@ -451,7 +455,7 @@ module.exports = async (req, res) => {
     }
   }
 
-  // --- 4. Message component (tombol, dll) — khusus Retry button ---
+  // --- 4. Message component (tombol, dll) — Retry button & Inventory tabs ---
   if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
     const customId = interaction.data?.custom_id || '';
     if (customId.startsWith('retry:')) {
@@ -460,6 +464,15 @@ module.exports = async (req, res) => {
       } catch (err) {
         console.error('[Dispatch] Unhandled error in retry button:', err);
         res.status(200).json({ type: 6 }); // DEFERRED_UPDATE_MESSAGE, aman minimal
+      }
+      return;
+    }
+    if (customId.startsWith('inventory:')) {
+      try {
+        await handleInventoryTabSwitch(interaction, res);
+      } catch (err) {
+        console.error('[Dispatch] Unhandled error in inventory tab switch:', err);
+        res.status(200).json({ type: 6 });
       }
       return;
     }
