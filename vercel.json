@@ -30,6 +30,9 @@
     },
     "api/process-dividend.js": {
       "maxDuration": 60
+    },
+    "api/process-auction-close.js": {
+      "maxDuration": 60
     }
   }
 }

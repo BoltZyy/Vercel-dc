@@ -41,6 +41,7 @@ const { handleBankList, handleBankDeposit, handleBankStatus, handleBankWithdraw,
 const { handleGacha } = require('../lib/commands/trading/gacha');
 const { handleEquip } = require('../lib/commands/trading/equip');
 const { handleInventory, handleInventoryTabSwitch } = require('../lib/commands/trading/inventory');
+const { handleAuctionSell, handleBid } = require('../lib/commands/trading/auction');
 const { handleWork } = require('../lib/commands/trading/work');
 const { handleDice } = require('../lib/commands/trading/dice');
 const { handleSlots } = require('../lib/commands/trading/slots');
@@ -379,6 +380,12 @@ module.exports = async (req, res) => {
           return;
         case 'inventory':
           await handleInventory(interaction, res);
+          return;
+        case 'auction-sell':
+          await handleAuctionSell(interaction, res);
+          return;
+        case 'bid':
+          await handleBid(interaction, res);
           return;
         case 'work':
           await handleWork(interaction, res);

@@ -724,6 +724,50 @@ const commands = [
     options: [],
   },
   {
+    name: 'auction-sell',
+    description: 'Buka lelang P2P untuk item luxury kamu',
+    type: 1,
+    options: [
+      {
+        name: 'item',
+        description: 'Kode item luxury yang mau dilelang',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'starting_price',
+        description: 'Harga bid awal (ZYC)',
+        type: 4,
+        required: true,
+      },
+      {
+        name: 'duration',
+        description: 'Durasi lelang dalam jam (1-168)',
+        type: 4,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'bid',
+    description: 'Tawar lelang P2P atau Official yang sedang aktif',
+    type: 1,
+    options: [
+      {
+        name: 'auction_id',
+        description: 'ID lelang (lihat pengumuman lelang)',
+        type: 3,
+        required: true,
+      },
+      {
+        name: 'jumlah',
+        description: 'Jumlah bid (ZYC)',
+        type: 4,
+        required: true,
+      },
+    ],
+  },
+  {
     name: 'work',
     description: 'Kerja untuk dapat ZYC (butuh stamina)',
     type: 1,
